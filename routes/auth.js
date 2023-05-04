@@ -1,7 +1,3 @@
-/**
- * User auth routes
- * @author Yousuf Kalim
- */
 const router = require('express').Router();
 const auth = require('../controllers/auth');
 const { checkAuth } = require('../middleware/checkAuth');

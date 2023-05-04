@@ -1,7 +1,3 @@
-/**
- * User auth controllers
- * @author Yousuf Kalim
- */
 const Users = require('../models/Users');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');

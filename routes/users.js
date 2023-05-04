@@ -1,7 +1,4 @@
-/**
- * User CRUD routes
- * @author Yousuf Kalim
- */
+
 const router = require('express').Router();
 const users = require('../controllers/users');
 const { checkAuth } = require('../middleware/checkAuth');

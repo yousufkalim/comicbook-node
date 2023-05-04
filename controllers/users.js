@@ -1,7 +1,3 @@
-/**
- * User CRUD controllers
- * @author Yousuf Kalim
- */
 const Users = require('../models/Users');
 const bcrypt = require('bcryptjs');
 const bcryptSalt = process.env.BCRYPT_SALT || 10;
