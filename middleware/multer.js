@@ -1,14 +1,10 @@
-/**
- * Multer strategy to upload images
- * @author Yousuf Kalim
- */
 const multer = require('multer');
 
 // Multer strategy for local uploading. (Read multer's documentation for more details)
 exports.upload = multer({
-  // to store images
+  // to store files
   storage: multer.diskStorage({
-    // Defining the path where we have to store the image
+    // Defining the path where we have to store the file
     destination: function (req, file, cb) {
       cb(null, './uploads'); // Callback
     },
@@ -17,8 +13,16 @@ exports.upload = multer({
       cb(null, Date.now() + '-' + file.originalname); // Callback
     },
   }),
-  // File size limit upto 5 mb
+  // File size limit upto 1GB
   limits: {
-    fileSize: 1024 * 1024 * 5,
+    fileSize: 1024 * 1024 * 1024,
+  },
+  fileFilter: function (req, file, cb) {
+    const allowedMimeTypes = ['image/png', 'image/gif', 'image/webp', 'video/mp4', 'audio/mp3'];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type'));
+    }
   },
 });

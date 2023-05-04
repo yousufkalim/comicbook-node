@@ -43,6 +43,22 @@ exports.changePasswordValidate = [
   check('newPassword', 'New password is required.').notEmpty().trim().isLength({ min: 8 }),
   check('confirmPassword', 'Confirm password is required.').notEmpty().trim().isLength({ min: 8 }),
 ];
+exports.validateNft = [
+  check('user', 'User is require.').notEmpty().trim(),
+  check('name', 'Item name is required.').notEmpty().trim(),
+  check('description', 'Description is required.').notEmpty(),
+  check('collect', 'Select your collection').notEmpty().trim(),
+  check('properties', 'properties is required.').notEmpty().trim(),
+  check('level', 'Enter the level').notEmpty().trim(),
+  check('stats', 'Enter the stats').notEmpty().trim(),
+  check('blockchain', 'Select your blockchain').notEmpty().trim(),
+  check('metadata', 'Enter the metadata').notEmpty().trim(),
+  check('type', 'Select your type').notEmpty().trim(),
+  check('method', 'Select your method').notEmpty().trim(),
+  check('price', 'Enter the price').notEmpty().trim(),
+  check('royalty', 'Select the royalty').notEmpty().trim(),
+  check('duration', 'Enter the duration').notEmpty().trim(),
+];
 
 /*
 ======================
