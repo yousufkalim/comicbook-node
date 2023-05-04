@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
       royalty,
       duration,
     } = req.body;
-
+    console.log('req', req.file);
     if (!req.file) {
       res.status(403).json({ success: false, message: 'Please select your Files' });
     } else {

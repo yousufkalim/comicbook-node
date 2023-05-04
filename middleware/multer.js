@@ -1,6 +1,5 @@
 const multer = require('multer');
 
-// Multer strategy for local uploading. (Read multer's documentation for more details)
 exports.upload = multer({
   // to store files
   storage: multer.diskStorage({
@@ -18,7 +17,15 @@ exports.upload = multer({
     fileSize: 1024 * 1024 * 1024,
   },
   fileFilter: function (req, file, cb) {
-    const allowedMimeTypes = ['image/png', 'image/gif', 'image/webp', 'video/mp4', 'audio/mp3'];
+    const allowedMimeTypes = [
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'video/mp4',
+      'audio/mp3',
+      'audio/mpeg',
+    ];
+    console.log('file.mimetype', file.mimetype);
     if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
