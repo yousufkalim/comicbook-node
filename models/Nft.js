@@ -40,23 +40,12 @@ const nftSchema = new mongoose.Schema(
     metadata: {
       type: String,
     },
-    type: {
-      type: String,
-      enum: ['Fixed Price', 'Timed Auction'],
-      default: 'Timed Auction',
-    },
-    method: {
-      type: String,
-    },
-    price: {
-      type: String,
-    },
-    royalty: {
-      type: String,
-    },
-    duration: {
-      type: String,
-    },
+    bids: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'listedItems',
+      },
+    ],
   },
   {
     timestamps: true,

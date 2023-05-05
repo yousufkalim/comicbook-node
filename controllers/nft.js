@@ -5,22 +5,8 @@ const bcryptSalt = process.env.BCRYPT_SALT || 10;
 
 exports.create = async (req, res) => {
   try {
-    let {
-      user,
-      name,
-      description,
-      collect,
-      properties,
-      level,
-      stats,
-      blockchain,
-      metadata,
-      type,
-      method,
-      price,
-      royalty,
-      duration,
-    } = req.body;
+    let { user, name, description, collect, properties, level, stats, blockchain, metadata, bids } =
+      req.body;
     console.log('req', req.file);
     if (!req.file) {
       res.status(403).json({ success: false, message: 'Please select your Files' });
@@ -71,6 +57,17 @@ exports.getAllByUser = async (req, res) => {
   }
 };
 exports.getById = async (req, res) => {
+  try {
+    const nftId = req.params.nftId; // Getting user id from URL parameter
+    const nft = await Nft.findById(nftId); // Finding user by id
+    // console.log('saln', salon?.address);
+    res.json({ success: true, nft }); // Success
+  } catch (err) {
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.listItemForSale = async (req, res) => {
   try {
     const nftId = req.params.nftId; // Getting user id from URL parameter
     const nft = await Nft.findById(nftId); // Finding user by id

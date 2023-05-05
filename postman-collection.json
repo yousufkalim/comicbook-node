@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "811d54a6-e9bb-4198-8d6f-4b771b7af16a",
-    "name": "NodeJS Boilerplate",
+    "name": "comicbook",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
