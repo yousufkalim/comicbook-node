@@ -34,7 +34,7 @@ const nftSchema = new mongoose.Schema(
     },
     blockchain: {
       type: String,
-      enum: ['Ethereum1', 'Ethereum2'],
+      enum: ['Ethereum1', 'Ethereum2', 'Polygon'],
       default: 'Ethereum1',
     },
     metadata: {
@@ -53,5 +53,4 @@ const nftSchema = new mongoose.Schema(
 );
 
 // Model
-// module.exports = mongoose.model('nft', nftSchema);
 module.exports = mongoose.model('nft', nftSchema);
