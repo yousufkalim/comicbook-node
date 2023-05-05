@@ -28,10 +28,9 @@ const userSchema = new mongoose.Schema(
       enum: ['user'],
       default: 'user',
     },
-    address: String,
-    city: String,
-    country: String,
-    photo: String,
+    wallet_address: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -13,7 +13,7 @@ const tokenSecret = process.env.JWT_SECRET;
 exports.login = async (req, res) => {
   try {
     // Getting email and password
-    const { email, password } = req.body;
+    const { email, password, wallet_address } = req.body;
 
     // Getting user from db
     const user = await Users.findOne({ email });

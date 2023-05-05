@@ -5,9 +5,26 @@ const bcryptSalt = process.env.BCRYPT_SALT || 10;
 
 exports.create = async (req, res) => {
   try {
-    let { user, name, description, collect, properties, level, stats, blockchain, metadata, bids } =
-      req.body;
-    console.log('req', req.file);
+    let {
+      user,
+      name,
+      description,
+      category,
+      properties,
+      level,
+      stats,
+      blockchain,
+      metadata,
+      bids,
+    } = req.body;
+    const existingUser = await Users.findById(user);
+    if (!existingUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    if (!existingUser.wallet_address) {
+      return res.status(400).json({ success: false, message: 'Please Connect the wallet' });
+    }
+
     if (!req.file) {
       res.status(403).json({ success: false, message: 'Please select your Files' });
     } else {
@@ -40,11 +57,20 @@ exports.getAllByUser = async (req, res) => {
 };
 exports.getById = async (req, res) => {
   try {
-    const nftId = req.params.nftId; // Getting user id from URL parameter
-    const nft = await Nft.findById(nftId); // Finding user by id
-    // console.log('saln', salon?.address);
+    const nftId = req.params.nftId; // Getting nft id from URL parameter
+    const nft = await Nft.findById(nftId); // Finding Nft by id
     res.json({ success: true, nft }); // Success
   } catch (err) {
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.getAll = async (req, res) => {
+  try {
+    const results = await Nft.find().populate('user'); // Finding all the beauticians from db
+    res.json({ success: true, results }); // Success
+  } catch (err) {
+    // Error handling
     console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }

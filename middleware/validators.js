@@ -47,7 +47,7 @@ exports.validateNft = [
   check('user', 'User is require.').notEmpty().trim(),
   check('name', 'Item name is required.').notEmpty().trim(),
   check('description', 'Description is required.').notEmpty(),
-  check('collect', 'Select your collection').notEmpty().trim(),
+  check('category', 'Select your Category').notEmpty().trim(),
   check('properties', 'properties is required.').notEmpty().trim(),
   check('level', 'Enter the level').notEmpty().trim(),
   check('stats', 'Enter the stats').notEmpty().trim(),

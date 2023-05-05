@@ -18,10 +18,10 @@ const nftSchema = new mongoose.Schema(
       type: String,
       // unique: true,
     },
-    collect: {
+    category: {
       type: String,
-      enum: ['collection1', 'collection2'],
-      default: 'collection1',
+      enum: ['Art', 'Music', 'Video', 'Photography', 'Game'],
+      default: 'Art',
     },
     properties: {
       type: String,

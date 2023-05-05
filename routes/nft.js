@@ -8,6 +8,7 @@ const { validateNft, isValidated } = require('../middleware/validators');
 router.post('/', upload.single('doc'), validateNft, isValidated, nft.create);
 router.get('/:userId', nft.getAllByUser);
 router.get('/nftById/:nftId', nft.getById);
+router.get('/', nft.getAll);
 
 // Export
 module.exports = router;
