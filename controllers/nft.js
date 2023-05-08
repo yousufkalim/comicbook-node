@@ -18,12 +18,12 @@ exports.create = async (req, res) => {
       bids,
     } = req.body;
     const existingUser = await Users.findById(user);
-    if (!existingUser) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-    if (!existingUser.wallet_address) {
-      return res.status(400).json({ success: false, message: 'Please Connect the wallet' });
-    }
+    // if (!existingUser) {
+    //   return res.status(404).json({ success: false, message: 'User not found' });
+    // }
+    // if (!existingUser.wallet_address) {
+    //   return res.status(400).json({ success: false, message: 'Please Connect the wallet' });
+    // }
 
     if (!req.file) {
       res.status(403).json({ success: false, message: 'Please select your Files' });
@@ -55,16 +55,17 @@ exports.getAllByUser = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-exports.getById = async (req, res) => {
+
+exports.getNfts = async (req, res) => {
   try {
-    const nftId = req.params.nftId; // Getting nft id from URL parameter
-    const nft = await Nft.findById(nftId); // Finding Nft by id
-    res.json({ success: true, nft }); // Success
+    const Nfts = await Nft.find(req.query).populate('user');
+    res.json({ success: true, Nfts }); // Success
   } catch (err) {
     console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
+
 exports.getAll = async (req, res) => {
   try {
     const results = await Nft.find().populate('user'); // Finding all the beauticians from db

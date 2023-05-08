@@ -2,7 +2,7 @@
  * All the validation
  * @author Yousuf Kalim
  */
-const { check, validationResult } = require('express-validator');
+const { check, query, validationResult } = require('express-validator');
 
 /*
 ====================

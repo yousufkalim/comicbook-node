@@ -20,7 +20,7 @@ const nftSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['Art', 'Music', 'Video', 'Photography', 'Game'],
+      enum: ['Art', 'Music', 'Video', 'Photography', 'Game', 'Audio'],
       default: 'Art',
     },
     properties: {
