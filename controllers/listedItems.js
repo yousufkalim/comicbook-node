@@ -1,39 +1,31 @@
-const Users = require('../models/Users');
+// const Users = require('../models/Users');
 const Nft = require('../models/Nft');
-const bcrypt = require('bcryptjs');
-const bcryptSalt = process.env.BCRYPT_SALT || 10;
 const ListedItems = require('../models/ListedItems');
 
 exports.create = async (req, res) => {
   try {
-    let { nft, type, method, price, royalty, duration } = req.body; // Finding user by id
+    let { nft } = req.body;
     const existingNft = await Nft.findById(nft);
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
     }
-    //
     const listedItems = await ListedItems.create(req.body);
-    const updatedNft = await Nft.findByIdAndUpdate(
-      nft,
-      { $push: { bids: listedItems } },
-      { new: true },
-    );
-    res.json({ success: true, listedItems }); // Success
+    await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
+    res.json({ listedItems, success: true }); // Success
   } catch (err) {
-    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
 exports.getById = async (req, res) => {
   try {
-    const listedItemId = req.params.listedItemId; // Getting user id from URL parameter
-    const bid = await ListedItems.findById(listedItemId); // Finding user by id
+    const listedItemId = req.params.listedItemId;
+    const bid = await ListedItems.findById(listedItemId).populate('nft').populate('owner');
     if (!bid) {
-      res.status(403).json({ success: false, message: 'Bid not found' });
+      res.status(403).json({ success: false, message: 'Listed item not found' });
     }
     res.json({ success: true, bid }); // Success
   } catch (err) {
-    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -50,7 +42,40 @@ exports.getAllBidByNFT = async (req, res) => {
       res.json({ success: true, bids, message: 'Bids fetched successfully' });
     }
   } catch (err) {
-    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.buy = async (req, res) => {
+  try {
+    const { userId, listedItemId } = req.body;
+
+    // Find the listed item by ID
+    const existingListedItem = await ListedItems.findById(listedItemId);
+
+    if (!existingListedItem) {
+      return res.status(404).json({ success: false, message: 'Listed item not found' });
+    }
+
+    // Find the NFT by ID from the listed item model
+    const existingNft = await Nft.findById(existingListedItem.nft._id).populate('owner');
+    // const existingNft = '2134567890ghdahbf';
+    if (!existingNft) {
+      return res.status(404).json({ success: false, message: 'NFT not found' });
+    }
+
+    // Update the NFT's owner field with the userId
+    existingNft.owner = userId;
+
+    // Remove the sold listed item from the NFT's bids array
+    existingNft.bids = existingNft.bids.filter((bid) => {
+      return bid.toString() !== listedItemId.toString();
+    });
+
+    // Save the updated NFT and remove the sold listed item
+    await Promise.all([existingNft.save(), existingListedItem.remove()]);
+
+    res.json({ success: true, message: 'Congratulations' }); // Success
+  } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };

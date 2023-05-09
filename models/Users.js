@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ['user'],
+      enum: ['user', 'buyer', 'seller'],
       default: 'user',
     },
     wallet_address: {
