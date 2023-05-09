@@ -2,7 +2,7 @@
  * All the validation
  * @author Yousuf Kalim
  */
-const { check, query, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
 /*
 ====================
@@ -53,14 +53,17 @@ exports.validateNft = [
   check('stats', 'Enter the stats').notEmpty().trim(),
   check('blockchain', 'Select your blockchain').notEmpty().trim(),
   check('metadata', 'Enter the metadata').notEmpty().trim(),
-];
-exports.validateListedItems = [
-  check('nft', 'Nft is required.').notEmpty().trim(),
   check('type', 'Select your type').notEmpty().trim(),
   check('method', 'Select your method').notEmpty().trim(),
   check('price', 'Enter the price').notEmpty().trim(),
   check('royalty', 'Select the royalty').notEmpty().trim(),
   check('duration', 'Enter the duration').notEmpty().trim(),
+];
+
+exports.validateBids = [
+  check('userId', 'User is required.').notEmpty().trim(),
+  check('nft', 'NFT is required').notEmpty().trim(),
+  check('price', 'Please enter your price').notEmpty().trim(),
 ];
 
 /*

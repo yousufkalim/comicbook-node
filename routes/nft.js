@@ -10,6 +10,7 @@ router.get('/get', nft.getNfts);
 router.get('/getPrice', nft.price);
 router.get('/', nft.getAll);
 router.get('/:userId', nft.getAllByUser);
+router.get('/range', nft.range);
 
 // Export
 module.exports = router;

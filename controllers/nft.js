@@ -30,7 +30,8 @@ exports.create = async (req, res) => {
 exports.getAllByUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-    if (!userId) {
+    const user = await Users.findById(userId);
+    if (!user) {
       res.status(403).json({ success: false, message: 'User Not Found' });
     }
     const nfts = await Nft.find({ user: userId }); // Find all NFTs where the user field matches the specified user ID
@@ -74,10 +75,51 @@ exports.price = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
+exports.range = async (req, res) => {
+  try {
+    const { minPrice, maxPrice } = req.query;
 
+    const priceFilter = {};
+    if (minPrice && maxPrice) {
+      priceFilter.price = { $gte: minPrice, $lte: maxPrice };
+    } else if (minPrice) {
+      priceFilter.price = { $gte: minPrice };
+    } else if (maxPrice) {
+      priceFilter.price = { $lte: maxPrice };
+    }
+
+    const Nfts = await Nft.find(priceFilter)
+      .populate('user')
+      .populate('owner')
+      .populate({
+        path: 'bids',
+        options: { sort: { price: 1 } },
+      })
+      .sort({ 'bids.price': 1 });
+
+    res.json({ success: true, Nfts });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 exports.getAll = async (req, res) => {
   try {
-    const results = await Nft.find().populate('user').populate('bids').populate('owner'); // Finding all the beauticians from db
+    let sortQuery = {};
+    const {
+      recent,
+      lth,
+      //rated, ...query
+    } = req.query;
+    if (recent) {
+      sortQuery['createdAt'] = recent;
+    }
+    if (lth) {
+      sortQuery['price'] = lth;
+    }
+    // if (rated) {
+    //   sortQuery['$expr'] = { $gt: [{ $size: '$owner' }, 0] };
+    // }
+    const results = await Nft.find().populate('user bids owner').sort(sortQuery);
     res.json({ success: true, results }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
