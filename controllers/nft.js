@@ -58,10 +58,26 @@ exports.getNfts = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
+exports.price = async (req, res) => {
+  try {
+    const Nfts = await Nft.find(req.query)
+      .populate('user')
+      .populate('owner')
+      .populate({
+        path: 'bids',
+        options: { sort: { price: 1 } }, // Sort bids by price in ascending order
+      })
+      .sort({ 'bids.price': 1 }); // Sort NFTs by the lowest bid price
+
+    res.json({ success: true, Nfts }); // Success
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server' });
+  }
+};
 
 exports.getAll = async (req, res) => {
   try {
-    const results = await Nft.find().populate('user'); // Finding all the beauticians from db
+    const results = await Nft.find().populate('user').populate('bids').populate('owner'); // Finding all the beauticians from db
     res.json({ success: true, results }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
