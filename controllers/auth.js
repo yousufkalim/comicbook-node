@@ -49,47 +49,47 @@ exports.login = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-exports.loginWithGoogle = async (req, res) => {
-  try {
-    const profile = req.user;
-    const user = await Users.findOne({ email: profile.email });
-    if (!user) {
-      const newUser = new Users();
-      newUser.username = profile.displayName;
-      newUser.role = 'User';
-      newUser.email.push(profile.email);
-      const token = await generateAuthToken(newUser);
-      await newUser.save();
-      return res.redirect(process.env.CLIENT_URL + `/home/?SignupByGoogle=true&&user=${token}`);
-    } else {
-      const token = await generateAuthToken(user);
-      return res.redirect(process.env.CLIENT_URL + `/home/?SignupByGoogle=true&&user=${token}`);
-    }
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
-exports.loginWithApple = async (req, res) => {
-  try {
-    const profile = req.user;
-    const user = await Users.findOne({ appleId: profile.id });
-    if (!user) {
-      const newUser = new Users();
-      newUser.username = profile.displayName;
-      newUser.role = 'User';
-      newUser.email.push(profile.email);
-      newUser.appleId = profile.id;
-      const token = await generateAuthToken(newUser);
-      await newUser.save();
-      return res.redirect(process.env.CLIENT_URL + `/home/?SignupByApple=true&&user=${token}`);
-    } else {
-      const token = await generateAuthToken(user);
-      return res.redirect(process.env.CLIENT_URL + `/home/?SignupByApple=true&&user=${token}`);
-    }
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+// exports.loginWithGoogle = async (req, res) => {
+//   try {
+//     const profile = req.user;
+//     const user = await Users.findOne({ email: profile.email });
+//     if (!user) {
+//       const newUser = new Users();
+//       newUser.username = profile.displayName;
+//       newUser.role = 'User';
+//       newUser.email.push(profile.email);
+//       const token = await generateAuthToken(newUser);
+//       await newUser.save();
+//       return res.redirect(process.env.CLIENT_URL + `/home/?SignupByGoogle=true&&user=${token}`);
+//     } else {
+//       const token = await generateAuthToken(user);
+//       return res.redirect(process.env.CLIENT_URL + `/home/?SignupByGoogle=true&&user=${token}`);
+//     }
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// };
+// exports.loginWithApple = async (req, res) => {
+//   try {
+//     const profile = req.user;
+//     const user = await Users.findOne({ appleId: profile.id });
+//     if (!user) {
+//       const newUser = new Users();
+//       newUser.username = profile.displayName;
+//       newUser.role = 'User';
+//       newUser.email.push(profile.email);
+//       newUser.appleId = profile.id;
+//       const token = await generateAuthToken(newUser);
+//       await newUser.save();
+//       return res.redirect(process.env.CLIENT_URL + `/home/?SignupByApple=true&&user=${token}`);
+//     } else {
+//       const token = await generateAuthToken(user);
+//       return res.redirect(process.env.CLIENT_URL + `/home/?SignupByApple=true&&user=${token}`);
+//     }
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// };
 
 /**
  * Forgot password

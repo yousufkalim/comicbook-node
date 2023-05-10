@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "811d54a6-e9bb-4198-8d6f-4b771b7af16a",
-    "name": "NodeJS Boilerplate",
+    "name": "comicbook",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -87,6 +87,66 @@
           "host": ["localhost"],
           "port": "5000",
           "path": ["api", "users", "6173ac62c87f90eeb6d82f21"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create NFT",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/nft/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "nft"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET NFT BY USER ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/nft/6173ac62c87f90eeb6d82f21",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "nft", "6173ac62c87f90eeb6d82f21"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET NFT ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/nft/nftById/6173ac62c87f90eeb6d82f21",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "nft", "nftById", "6173ac62c87f90eeb6d82f21"]
         }
       },
       "response": []

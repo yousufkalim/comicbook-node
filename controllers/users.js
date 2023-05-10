@@ -9,7 +9,7 @@ const bcryptSalt = process.env.BCRYPT_SALT || 10;
  */
 exports.create = async (req, res) => {
   try {
-    let { email, password, first_name, last_name } = req.body; // Getting required fields from body
+    let { email, password } = req.body; // Getting required fields from body
     const existingUser = await Users.findOne({ email }); // Finding already existing user
 
     // Extra Validations
@@ -24,9 +24,6 @@ exports.create = async (req, res) => {
     // Done
     res.json({ success: true, message: 'User has been created successfully', user }); //Success
   } catch (err) {
-    // Error handling
-    // eslint-disable-next-line no-console
-    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -41,9 +38,6 @@ exports.getAll = async (req, res) => {
     const users = await Users.find(); // Finding all the users from db
     res.json({ success: true, users }); // Success
   } catch (err) {
-    // Error handling
-    // eslint-disable-next-line no-console
-    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -59,9 +53,6 @@ exports.getById = async (req, res) => {
     const user = await Users.findById(userId); // Finding user by id
     res.json({ success: true, user }); // Success
   } catch (err) {
-    // Error handling
-    // eslint-disable-next-line no-console
-    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
