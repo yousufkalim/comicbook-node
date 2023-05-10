@@ -59,69 +59,107 @@ exports.getNfts = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
-exports.price = async (req, res) => {
-  try {
-    const Nfts = await Nft.find(req.query)
-      .populate('user')
-      .populate('owner')
-      .populate({
-        path: 'bids',
-        options: { sort: { price: 1 } }, // Sort bids by price in ascending order
-      })
-      .sort({ 'bids.price': 1 }); // Sort NFTs by the lowest bid price
-
-    res.json({ success: true, Nfts }); // Success
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Internal server' });
-  }
-};
 exports.range = async (req, res) => {
   try {
     const { minPrice, maxPrice } = req.query;
-
-    const priceFilter = {};
+    const filter = {};
     if (minPrice && maxPrice) {
-      priceFilter.price = { $gte: minPrice, $lte: maxPrice };
+      filter.price = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
     } else if (minPrice) {
-      priceFilter.price = { $gte: minPrice };
+      filter.price = { $gte: parseFloat(minPrice) };
     } else if (maxPrice) {
-      priceFilter.price = { $lte: maxPrice };
+      filter.price = { $lte: parseFloat(maxPrice) };
     }
 
-    const Nfts = await Nft.find(priceFilter)
-      .populate('user')
-      .populate('owner')
-      .populate({
-        path: 'bids',
-        options: { sort: { price: 1 } },
-      })
-      .sort({ 'bids.price': 1 });
+    const nfts = await Nft.find(filter);
 
-    res.json({ success: true, Nfts });
+    res.json({ success: true, nfts });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
+// exports.range = async (req, res) => {
+//   try {
+//     const { minPrice, maxPrice } = req.query;
+
+//     const priceFilter = {};
+//     if (minPrice && maxPrice) {
+//       priceFilter.price = { $gte: minPrice, $lte: maxPrice };
+//     } else if (minPrice) {
+//       priceFilter.price = { $gte: minPrice };
+//     } else if (maxPrice) {
+//       priceFilter.price = { $lte: maxPrice };
+//     }
+
+//     const Nfts = await Nft.find(priceFilter)
+//       .populate('user')
+//       .populate('owner')
+//       .populate({
+//         path: 'bids',
+//         options: { sort: { price: 1 } },
+//       })
+//       .sort({ 'bids.price': 1 });
+
+//     res.json({ success: true, Nfts });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
 exports.getAll = async (req, res) => {
   try {
     let sortQuery = {};
     const {
       recent,
       lth,
+      minPrice,
+      maxPrice,
       //rated, ...query
     } = req.query;
+
     if (recent) {
       sortQuery['createdAt'] = recent;
     }
     if (lth) {
       sortQuery['price'] = lth;
     }
-    // if (rated) {
-    //   sortQuery['$expr'] = { $gt: [{ $size: '$owner' }, 0] };
-    // }
-    const results = await Nft.find().populate('user bids owner').sort(sortQuery);
+
+    let filter = {};
+    if (minPrice && maxPrice) {
+      filter['price'] = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
+    } else if (minPrice) {
+      filter['price'] = { $gte: parseFloat(minPrice) };
+    } else if (maxPrice) {
+      filter['price'] = { $lte: parseFloat(maxPrice) };
+    }
+
+    const results = await Nft.find(filter).populate('user bids owner').sort(sortQuery);
     res.json({ success: true, results }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
+// exports.getAll = async (req, res) => {
+//   try {
+//     let sortQuery = {};
+//     const {
+//       recent,
+//       lth,
+//       //rated, ...query
+//     } = req.query;
+//     if (recent) {
+//       sortQuery['createdAt'] = recent;
+//     }
+//     if (lth) {
+//       sortQuery['price'] = lth;
+//     }
+//     // if (rated) {
+//     //   sortQuery['$expr'] = { $gt: [{ $size: '$owner' }, 0] };
+//     // }
+//     const results = await Nft.find().populate('user bids owner').sort(sortQuery);
+//     res.json({ success: true, results }); // Success
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };

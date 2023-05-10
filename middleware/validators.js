@@ -65,6 +65,10 @@ exports.validateBids = [
   check('nft', 'NFT is required').notEmpty().trim(),
   check('price', 'Please enter your price').notEmpty().trim(),
 ];
+exports.validateRange = [
+  check('minPrice', 'Please provide Minimum Value').notEmpty().trim(),
+  check('maxPrice', 'Please provide Maximum Value').notEmpty().trim(),
+];
 
 /*
 ======================
