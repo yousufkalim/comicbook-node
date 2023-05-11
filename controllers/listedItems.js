@@ -21,11 +21,11 @@ exports.create = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const listedItemId = req.params.listedItemId;
-    const bid = await ListedItems.findById(listedItemId).populate('nft').populate('bids');
-    if (!bid) {
+    const listedItem = await ListedItems.findById(listedItemId).populate('nft').populate('bids');
+    if (!listedItem) {
       res.status(403).json({ success: false, message: 'Listed item not found' });
     }
-    res.json({ success: true, bid }); // Success
+    res.json({ success: true, listedItem }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
