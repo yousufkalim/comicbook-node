@@ -26,6 +26,10 @@ const listedItems = new mongoose.Schema(
     duration: {
       type: String,
     },
+    listed: {
+      type: Boolean,
+      default: false,
+    },
     bids: [
       {
         type: mongoose.Schema.Types.ObjectId,

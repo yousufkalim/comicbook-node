@@ -9,6 +9,7 @@ exports.create = async (req, res) => {
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
     }
+    req.body.listed = true;
     const listedItems = await ListedItems.create(req.body);
     await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
     res.json({ listedItems, success: true }); // Success

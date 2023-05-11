@@ -17,6 +17,7 @@ exports.create = async (req, res) => {
       req.body.doc = req.file.path;
     }
     req.body.owner = user;
+    req.body.created = true;
     const nft = await Nft.create(req.body);
 
     // await Nft.findByIdAndUpdate(nft._id, { $push: { owner: user } }).populate('owner');
