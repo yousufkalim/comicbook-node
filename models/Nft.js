@@ -34,15 +34,6 @@ const nftSchema = new mongoose.Schema(
       enum: ['Art', 'Music', 'Video', 'Photography', 'Game', 'Audio'],
       default: 'Art',
     },
-    properties: {
-      type: String,
-    },
-    level: {
-      type: String,
-    },
-    stats: {
-      type: String,
-    },
     blockchain: {
       type: String,
       enum: ['Ethereum1', 'Ethereum2', 'Polygon'],
@@ -51,35 +42,6 @@ const nftSchema = new mongoose.Schema(
     metadata: {
       type: String,
     },
-    nft: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'nft',
-      // required: true,
-    },
-
-    type: {
-      type: String,
-      enum: ['Fixed Price', 'Timed Auction'],
-      default: 'Timed Auction',
-    },
-    method: {
-      type: String,
-    },
-    price: {
-      type: Number,
-    },
-    royalty: {
-      type: String,
-    },
-    duration: {
-      type: String,
-    },
-    bids: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'bids',
-      },
-    ],
   },
   {
     timestamps: true,
