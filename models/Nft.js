@@ -39,9 +39,6 @@ const nftSchema = new mongoose.Schema(
       enum: ['Ethereum1', 'Ethereum2', 'Polygon'],
       default: 'Ethereum1',
     },
-    metadata: {
-      type: String,
-    },
   },
   {
     timestamps: true,
