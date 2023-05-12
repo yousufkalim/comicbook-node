@@ -16,6 +16,8 @@ const listedItems = new mongoose.Schema(
     },
     method: {
       type: String,
+      enum: ['Sell to high bider', 'Sell to Recent bider', 'None'],
+      default: 'Sell to high bider',
     },
     price: {
       type: String,
@@ -24,7 +26,7 @@ const listedItems = new mongoose.Schema(
       type: String,
     },
     duration: {
-      type: String,
+      type: Date,
     },
     listed: {
       type: Boolean,

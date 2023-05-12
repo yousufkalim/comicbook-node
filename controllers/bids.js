@@ -8,7 +8,7 @@ const Nft = require('../models/Nft');
 exports.create = async (req, res) => {
   try {
     let { listedItem } = req.body;
-    const existingNft = await Nft.findById(listedItem);
+    const existingNft = await ListedItems.findById(listedItem);
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Item not found' });
     }

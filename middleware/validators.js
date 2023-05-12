@@ -60,7 +60,7 @@ exports.validateListedItems = [
 ];
 exports.validateBids = [
   check('userId', 'User is required.').notEmpty().trim(),
-  check('nft', 'NFT is required').notEmpty().trim(),
+  check('listedItem', 'Listed Item is required').notEmpty().trim(),
   check('price', 'Please enter your price').notEmpty().trim(),
 ];
 exports.validateRange = [

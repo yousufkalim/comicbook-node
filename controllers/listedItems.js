@@ -30,7 +30,77 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+exports.getListedItems = async (req, res) => {
+  try {
+    const { category, ...query } = req.query; // Extract the category and other query parameters
 
+    const nftQuery = category ? { category } : {}; // Create the query for the nft category
+
+    const ListedItem = await ListedItems.find(query)
+      .populate({
+        path: 'nft',
+        match: nftQuery, // Only populate nft objects with the specified category (if provided)
+      })
+      // .populate('owner')
+      .populate('bids');
+
+    const filteredListedItems = ListedItem.filter((item) => item.nft !== null); // Filter out ListedItems with null nft (no match for the specified category)
+
+    res.json({ success: true, ListedItem: filteredListedItems }); // Success
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server' });
+  }
+};
+exports.recommended = async (req, res) => {
+  try {
+    const ListedItem = await ListedItems.find()
+      .populate('nft')
+      .populate({
+        path: 'bids',
+        options: { sort: { createdAt: -1 }, limit: 1 }, // Sort bids in descending order of createdAt and limit to 1 (to get the highest bid)
+      })
+      .sort({ 'bids.length': -1 }); // Sort by the number of bids in descending order
+    // .limit(16); // Limit the result to 16 NFTs
+
+    res.json({ success: true, ListedItem }); // Success
+  } catch (err) {
+    // console.log('first', err);
+    res.status(500).json({ success: false, message: 'Internal server' });
+  }
+};
+exports.getAll = async (req, res) => {
+  try {
+    let sortQuery = {};
+    const {
+      recent,
+      lth,
+      minPrice,
+      maxPrice,
+      //rated, ...query
+    } = req.query;
+
+    if (recent) {
+      sortQuery['createdAt'] = recent;
+    }
+    if (lth) {
+      sortQuery['price'] = lth;
+    }
+
+    let filter = {};
+    if (minPrice && maxPrice) {
+      filter['price'] = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
+    } else if (minPrice) {
+      filter['price'] = { $gte: parseFloat(minPrice) };
+    } else if (maxPrice) {
+      filter['price'] = { $lte: parseFloat(maxPrice) };
+    }
+
+    const results = await ListedItems.find(filter).populate('bids nft').sort(sortQuery);
+    res.json({ success: true, results }); // Success
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 // // exports.getAllBidByNFT = async (req, res) => {
 // //   try {
 // //     const nftId = req.params.nftId;
@@ -47,14 +117,14 @@ exports.getById = async (req, res) => {
 // //     res.status(500).json({ success: false, message: 'Internal server error' });
 // //   }
 // // };
-exports.getAll = async (req, res) => {
-  try {
-    const results = await ListedItems.find().populate('nft');
-    res.json({ success: true, results }); // Success
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-};
+// exports.getAll = async (req, res) => {
+//   try {
+//     const results = await ListedItems.find().populate('nft');
+//     res.json({ success: true, results }); // Success
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
 // // exports.buy = async (req, res) => {
 // //   try {
 // //     const { userId, listedItemId } = req.body;

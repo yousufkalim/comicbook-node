@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Schema
 const bids = new mongoose.Schema(
   {
-    nft: {
+    listedItem: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'listedItems',
       // required: true,
