@@ -29,8 +29,8 @@ const listedItems = new mongoose.Schema(
     },
     currency: {
       type: String,
-      enum: ['Polygon', 'Bitcoin', 'Atherium'],
-      default: 'Atherium',
+      enum: ['Polygon', 'Bitcoin', 'Ethereum'],
+      default: 'Ethereum',
     },
     duration: {
       type: Date,
