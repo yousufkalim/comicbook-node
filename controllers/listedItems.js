@@ -24,7 +24,10 @@ exports.create = async (req, res) => {
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
     }
-
+    const existingListedItem = await ListedItems.findOne({ nft: nft });
+    if (existingListedItem) {
+      return res.status(404).json({ success: false, message: 'This NFT is already listed' });
+    }
     const { type } = req.body;
     if (type === 'Fixed Price') {
       const { price, royalty } = req.body;
@@ -111,23 +114,36 @@ exports.getListedItems = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
-// exports.recommended = async (req, res) => {
-//   try {
-//     const ListedItem = await ListedItems.find()
-//       .populate('nft')
-//       .populate({
-//         path: 'bids',
-//         options: { sort: { createdAt: -1 }, limit: 1 }, // Sort bids in descending order of createdAt and limit to 1 (to get the highest bid)
-//       })
-//       .sort({ 'bids.length': -1 }); // Sort by the number of bids in descending order
-//     // .limit(16); // Limit the result to 16 NFTs
 
-//     res.json({ success: true, ListedItem }); // Success
-//   } catch (err) {
-//     // console.log('first', err);
-//     res.status(500).json({ success: false, message: 'Internal server' });
-//   }
-// };
+exports.topRated = async (req, res) => {
+  try {
+    const ListedItem = await ListedItems.aggregate([
+      {
+        $lookup: {
+          from: 'bids', // Assuming the collection name is 'bids'
+          localField: 'bids',
+          foreignField: '_id',
+          as: 'bids',
+        },
+      },
+      {
+        $addFields: {
+          numBids: { $size: '$bids' },
+        },
+      },
+      {
+        $sort: { numBids: -1 },
+      },
+    ]);
+
+    const populatedListedItem = await ListedItems.populate(ListedItem, { path: 'nft' });
+
+    res.json({ success: true, ListedItem: populatedListedItem }); // Success
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
 exports.getAll = async (req, res) => {
   try {
     let sortQuery = {};

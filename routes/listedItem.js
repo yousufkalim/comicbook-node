@@ -4,12 +4,12 @@ const listedItems = require('../controllers/listedItems');
 
 // // Create - NFT
 router.post('/', listedItems.create);
-router.get('/get', listedItems.getListedItems);
+// router.get('/get', listedItems.getListedItems);
 
-// // router.post('/buy', listedItems.buy);
-router.get('/:listedItemId', listedItems.getById);
-router.get('/', listedItems.getAll);
-// router.get('/recommended', listedItems.recommended);
+// // // router.post('/buy', listedItems.buy);
+// router.get('/:listedItemId', listedItems.getById);
+// router.get('/', listedItems.getAll);
+router.get('/topRated', listedItems.topRated);
 // // router.get('/bidsByNft/:nftId', listedItems.getAllBidByNFT);
 
 // // Export

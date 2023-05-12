@@ -19,6 +19,12 @@ exports.create = async (req, res) => {
         .status(400)
         .json({ success: false, message: 'Bidding is not possible for this type' });
     }
+    if (req.body.price < existingItem.price) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bid price cannot be less than the listed item price',
+      });
+    }
 
     const Bid = await Bids.create(req.body);
     await ListedItems.findByIdAndUpdate(listedItem, { $push: { bids: Bid } }, { new: true });
