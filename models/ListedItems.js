@@ -23,8 +23,14 @@ const listedItems = new mongoose.Schema(
       type: String,
     },
     royalty: {
+      type: Number,
+      enum: [5, 10, 15],
+      default: 5,
+    },
+    currency: {
       type: String,
-      enum: ['5%', '10%', '15%'],
+      enum: ['Polygon', 'Bitcoin', 'Atherium'],
+      default: 'Atherium',
     },
     duration: {
       type: Date,

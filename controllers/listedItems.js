@@ -111,23 +111,23 @@ exports.getListedItems = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
-exports.recommended = async (req, res) => {
-  try {
-    const ListedItem = await ListedItems.find()
-      .populate('nft')
-      .populate({
-        path: 'bids',
-        options: { sort: { createdAt: -1 }, limit: 1 }, // Sort bids in descending order of createdAt and limit to 1 (to get the highest bid)
-      })
-      .sort({ 'bids.length': -1 }); // Sort by the number of bids in descending order
-    // .limit(16); // Limit the result to 16 NFTs
+// exports.recommended = async (req, res) => {
+//   try {
+//     const ListedItem = await ListedItems.find()
+//       .populate('nft')
+//       .populate({
+//         path: 'bids',
+//         options: { sort: { createdAt: -1 }, limit: 1 }, // Sort bids in descending order of createdAt and limit to 1 (to get the highest bid)
+//       })
+//       .sort({ 'bids.length': -1 }); // Sort by the number of bids in descending order
+//     // .limit(16); // Limit the result to 16 NFTs
 
-    res.json({ success: true, ListedItem }); // Success
-  } catch (err) {
-    // console.log('first', err);
-    res.status(500).json({ success: false, message: 'Internal server' });
-  }
-};
+//     res.json({ success: true, ListedItem }); // Success
+//   } catch (err) {
+//     // console.log('first', err);
+//     res.status(500).json({ success: false, message: 'Internal server' });
+//   }
+// };
 exports.getAll = async (req, res) => {
   try {
     let sortQuery = {};
