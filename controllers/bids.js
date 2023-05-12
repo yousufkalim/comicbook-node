@@ -4,14 +4,22 @@ const ListedItems = require('../models/ListedItems');
 const Nft = require('../models/Nft');
 // // const bcrypt = require('bcryptjs');
 // // const bcryptSalt = process.env.BCRYPT_SALT || 10;
-
 exports.create = async (req, res) => {
   try {
     let { listedItem } = req.body;
-    const existingNft = await ListedItems.findById(listedItem);
-    if (!existingNft) {
+    const existingItem = await ListedItems.findById(listedItem);
+    if (!existingItem) {
       return res.status(404).json({ success: false, message: 'Item not found' });
     }
+
+    const { type } = existingItem;
+
+    if (type === 'Fixed Price') {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Bidding is not possible for this type' });
+    }
+
     const Bid = await Bids.create(req.body);
     await ListedItems.findByIdAndUpdate(listedItem, { $push: { bids: Bid } }, { new: true });
     res.json({ Bid, success: true }); // Success
@@ -19,6 +27,7 @@ exports.create = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
 // exports.getBidsByNft = async (req, res) => {
 //   try {
 //     const nftId = req.params.nftId;

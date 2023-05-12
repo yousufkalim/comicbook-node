@@ -24,6 +24,7 @@ const listedItems = new mongoose.Schema(
     },
     royalty: {
       type: String,
+      enum: ['5%', '10%', '15%'],
     },
     duration: {
       type: Date,

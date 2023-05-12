@@ -2,12 +2,72 @@
 const Nft = require('../models/Nft');
 const ListedItems = require('../models/ListedItems');
 
+// exports.create = async (req, res) => {
+//   try {
+//     let { nft } = req.body;
+//     const existingNft = await Nft.findById(nft);
+//     if (!existingNft) {
+//       return res.status(404).json({ success: false, message: 'Nft not found' });
+//     }
+//     if (req.body.type == 'Fixed Price') req.body.listed = true;
+//     const listedItems = await ListedItems.create(req.body);
+//     await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
+//     res.json({ listedItems, success: true }); // Success
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
 exports.create = async (req, res) => {
   try {
     let { nft } = req.body;
     const existingNft = await Nft.findById(nft);
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
+    }
+
+    const { type } = req.body;
+    if (type === 'Fixed Price') {
+      const { price, royalty } = req.body;
+      if (!price) {
+        return res
+          .status(400)
+          .json({ success: false, message: 'Price is required for Fixed Price NFT' });
+      }
+      if (!royalty) {
+        return res
+          .status(400)
+          .json({ success: false, message: 'Royalty is required for Fixed Price NFT' });
+      }
+      req.body.listed = true;
+    } else if (type === 'Timed Auction') {
+      const { price, duration, royalty, method } = req.body;
+      if (!price) {
+        return res.status(400).json({
+          success: false,
+          message: 'Price is required for Timed Auction NFT',
+        });
+      }
+      if (!duration) {
+        return res.status(400).json({
+          success: false,
+          message: 'Duration is required for Timed Auction NFT',
+        });
+      }
+      if (!royalty) {
+        return res.status(400).json({
+          success: false,
+          message: 'Royalty is required for Timed Auction NFT',
+        });
+      }
+      if (!method) {
+        return res.status(400).json({
+          success: false,
+          message: 'Method is required for Timed Auction NFT',
+        });
+      }
+      req.body.listed = false; // Assuming the NFT is not listed immediately for a timed auction
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid NFT type' });
     }
     req.body.listed = true;
     const listedItems = await ListedItems.create(req.body);
