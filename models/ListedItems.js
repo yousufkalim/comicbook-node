@@ -20,7 +20,7 @@ const listedItems = new mongoose.Schema(
       default: 'Sell to high bider',
     },
     price: {
-      type: String,
+      type: Number,
     },
     royalty: {
       type: Number,

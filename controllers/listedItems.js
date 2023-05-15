@@ -30,7 +30,10 @@ exports.create = async (req, res) => {
     }
     const { type } = req.body;
     if (type === 'Fixed Price') {
-      const { price, royalty } = req.body;
+      const { currency, price, royalty } = req.body;
+      if (!currency) {
+        return res.status(400).json({ success: false, message: 'Select the Currency' });
+      }
       if (!price) {
         return res
           .status(400)
@@ -43,7 +46,10 @@ exports.create = async (req, res) => {
       }
       req.body.listed = true;
     } else if (type === 'Timed Auction') {
-      const { price, duration, royalty, method } = req.body;
+      const { currency, price, duration, royalty, method } = req.body;
+      if (!currency) {
+        return res.status(400).json({ success: false, message: 'Select the Currency' });
+      }
       if (!price) {
         return res.status(400).json({
           success: false,
@@ -77,6 +83,8 @@ exports.create = async (req, res) => {
     await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
     res.json({ listedItems, success: true }); // Success
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('first', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };

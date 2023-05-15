@@ -28,6 +28,7 @@ exports.create = async (req, res) => {
 
     const Bid = await Bids.create(req.body);
     await ListedItems.findByIdAndUpdate(listedItem, { $push: { bids: Bid } }, { new: true });
+
     res.json({ Bid, success: true }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
