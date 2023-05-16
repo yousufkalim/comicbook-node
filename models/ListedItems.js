@@ -35,10 +35,7 @@ const listedItems = new mongoose.Schema(
     duration: {
       type: Date,
     },
-    listed: {
-      type: Boolean,
-      default: false,
-    },
+
     bids: [
       {
         type: mongoose.Schema.Types.ObjectId,

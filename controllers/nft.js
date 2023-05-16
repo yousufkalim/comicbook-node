@@ -52,7 +52,6 @@ exports.getNfts = async (req, res) => {
     const Nfts = await Nft.find(req.query)
       .populate('creator')
       .populate('owner')
-      .populate('bids')
       .sort({ createdAt: -1 });
 
     res.json({ success: true, Nfts }); // Success
@@ -68,7 +67,8 @@ exports.getAll = async (req, res) => {
       // lth,
       // minPrice,
       // maxPrice,
-      //rated, ...query
+      //rated,
+      //...query
     } = req.query;
 
     if (recent) {

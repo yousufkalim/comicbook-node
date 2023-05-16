@@ -3,11 +3,6 @@ const mongoose = require('mongoose');
 // Schema
 const nftSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
-      // required: true,
-    },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'users',
@@ -34,7 +29,7 @@ const nftSchema = new mongoose.Schema(
       type: String,
       // unique: true,
     },
-    created: {
+    listed: {
       type: Boolean,
       default: false,
     },

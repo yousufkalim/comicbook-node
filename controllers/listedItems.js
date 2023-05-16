@@ -44,7 +44,8 @@ exports.create = async (req, res) => {
           .status(400)
           .json({ success: false, message: 'Royalty is required for Fixed Price NFT' });
       }
-      req.body.listed = true;
+      existingNft.listed = true;
+      await existingNft.save();
     } else if (type === 'Timed Auction') {
       const { currency, price, duration, royalty, method } = req.body;
       if (!currency) {
@@ -74,11 +75,11 @@ exports.create = async (req, res) => {
           message: 'Method is required for Timed Auction NFT',
         });
       }
-      req.body.listed = false; // Assuming the NFT is not listed immediately for a timed auction
+      existingNft.listed = true;
+      await existingNft.save();
     } else {
       return res.status(400).json({ success: false, message: 'Invalid NFT type' });
     }
-    req.body.listed = true;
     const listedItems = await ListedItems.create(req.body);
     await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
     res.json({ listedItems, success: true }); // Success
@@ -101,12 +102,83 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+// exports.getListedItems = async (req, res) => {
+//   try {
+//     const { category, lth, minPrice, maxPrice, ...query } =
+//       req.query; // Extract the category and other query parameters
+
+//     const nftQuery = category
+//       ? { category }
+//       : {}; // Create the query for the nft category
+
+//     let sortQuery = {};
+//     if (recent) {
+//       sortQuery['createdAt'] = recent;
+//     }
+//     if (lth) {
+//       sortQuery['price'] = lth;
+//     }
+
+// let filter = {};
+// if (minPrice && maxPrice) {
+//   filter = {
+//     ...nftQuery,
+//     price: { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) },
+//   };
+// } else if (minPrice || maxPrice) {
+//   // Handle the case when only one of minPrice or maxPrice is provided
+//   res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
+//   return;
+// } else {
+//   filter = nftQuery;
+// }
+
+//     const ListedItem = await ListedItems.find(query)
+//       .populate({
+//         path: 'nft',
+//         match: filter, // Apply both category and price filters
+//       })
+//       .populate('bids')
+//       .sort(sortQuery);
+
+//     const filteredListedItems = ListedItem.filter((item) => item.nft !== null); // Filter out ListedItems with null nft (no match for the specified category)
+
+//     res.json({ success: true, ListedItem: filteredListedItems }); // Success
+//   } catch (err) {
+//     console.log('Error-->', err);
+//     res.status(500).json({ success: false, message: 'Internal server' });
+//   }
+// };
+
 exports.getListedItems = async (req, res) => {
   try {
-    const { category, ...query } = req.query; // Extract the category and other query parameters
+    const { category, lth, minPrice, maxPrice, recent, ...query } = req.query; // Extract the category and other query parameters
 
     const nftQuery = category ? { category } : {}; // Create the query for the nft category
 
+    let sortQuery = {};
+    if (recent) {
+      sortQuery['createdAt'] = recent;
+    }
+    if (lth) {
+      sortQuery['price'] = lth;
+    }
+
+    let filter = {};
+    if (minPrice && maxPrice) {
+      // eslint-disable-next-line no-console
+      console.log('first', filter);
+      filter = {
+        ...nftQuery,
+        price: { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) },
+      };
+    } else if (minPrice || maxPrice) {
+      // Handle the case when only one of minPrice or maxPrice is provided
+      res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
+      return;
+    } else {
+      filter = nftQuery;
+    }
     const ListedItem = await ListedItems.find(query)
       .populate({
         path: 'nft',
@@ -119,6 +191,8 @@ exports.getListedItems = async (req, res) => {
 
     res.json({ success: true, ListedItem: filteredListedItems }); // Success
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('Error-->', err);
     res.status(500).json({ success: false, message: 'Internal server' });
   }
 };
@@ -178,15 +252,6 @@ exports.getAll = async (req, res) => {
       res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
       return;
     }
-
-    // if (minPrice && maxPrice) {
-    //   filter['price'] = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
-    // } else if (minPrice) {
-    //   filter['price'] = { $gte: parseFloat(minPrice) };
-    // } else if (maxPrice) {
-    //   filter['price'] = { $lte: parseFloat(maxPrice) };
-    // }
-
     const results = await ListedItems.find(filter).populate('bids nft').sort(sortQuery);
     res.json({ success: true, results }); // Success
   } catch (err) {
