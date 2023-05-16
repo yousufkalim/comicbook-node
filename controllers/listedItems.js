@@ -173,11 +173,19 @@ exports.getAll = async (req, res) => {
     let filter = {};
     if (minPrice && maxPrice) {
       filter['price'] = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
-    } else if (minPrice) {
-      filter['price'] = { $gte: parseFloat(minPrice) };
-    } else if (maxPrice) {
-      filter['price'] = { $lte: parseFloat(maxPrice) };
+    } else if (minPrice || maxPrice) {
+      // Handle the case when only one of minPrice or maxPrice is provided
+      res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
+      return;
     }
+
+    // if (minPrice && maxPrice) {
+    //   filter['price'] = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
+    // } else if (minPrice) {
+    //   filter['price'] = { $gte: parseFloat(minPrice) };
+    // } else if (maxPrice) {
+    //   filter['price'] = { $lte: parseFloat(maxPrice) };
+    // }
 
     const results = await ListedItems.find(filter).populate('bids nft').sort(sortQuery);
     res.json({ success: true, results }); // Success
