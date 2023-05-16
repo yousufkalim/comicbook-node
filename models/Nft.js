@@ -7,12 +7,10 @@ const nftSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'users',
     },
-    owner: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-      },
-    ],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+    },
     previousOwners: [
       {
         type: mongoose.Schema.Types.ObjectId,
