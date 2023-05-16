@@ -88,10 +88,11 @@ exports.getAll = async (req, res) => {
     // }
 
     // const results = await Nft.find(filter).populate('user bids owner').sort(sortQuery);
-    const results = await Nft.find().populate('user owner');
+    const results = await Nft.find().populate('owner');
     res.json({ success: true, results }); // Success
   } catch (err) {
-    // console.log('first', err);
+    // eslint-disable-next-line no-console
+    console.log('first', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
