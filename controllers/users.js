@@ -56,22 +56,3 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-exports.update = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    if (!userId) {
-      res.json({ success: false, message: 'Please enter the Id' });
-    }
-    const User = await Users.findByIdAndUpdate(userId, req.body, {
-      new: true,
-    }); // Updating the User
-    res.json({ success: true, User }); // Success
-    // eslint-disable-next-line no-console
-    console.log('wallet', User.walletAddress);
-  } catch (err) {
-    // Error handling
-    // eslint-disable-next-line no-console
-    console.log('Error ----> ', err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-};

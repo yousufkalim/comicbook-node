@@ -17,62 +17,50 @@ cron.schedule('0 0 0 * * *', async () => {
     path: 'bids',
     model: bids, // Name of the model
   });
-  // .populate({
-  //   path: 'nft',
-  //   model: NFTs, // Name of the model
-  // });
-  // eslint-disable-next-line no-console
-  console.log('listedItems12', listedItems);
 
   for (const listedItem of listedItems) {
-    const { bids, method, nft } = listedItem;
+    const { bids, method, nft, royalty } = listedItem;
     const nfts = await NFTs.findById(nft);
     // Check if the listed item's method is 'sell to high bidder'
     if (nfts.listed === true) {
       if (method === 'Sell to high bider') {
-        // eslint-disable-next-line no-console
-        console.log('Sell to high bider12');
         // Check if the listed item has bids
         // const bids = await NFTs.findById(bid);
         if (bids.length > 0) {
-          // eslint-disable-next-line no-console
-          console.log('first123', bids.length);
           // Sort the bids in descending order based on bid value
           bids.sort((a, b) => b.price - a.price);
-          // eslint-disable-next-line no-console
-          console.log(
-            'first098',
-            bids.sort((a, b) => b.price - a.price),
-          );
           const highestBid = bids[0];
-          // eslint-disable-next-line no-console
-          console.log('first190', highestBid);
-
           const { userId, price } = highestBid;
+
           // eslint-disable-next-line no-console
-          console.log('fdgvhbn', userId, price);
+          console.log('price', userId);
+
+          const royaltyPercentage = royalty;
+
+          // Calculate royalty price
+          const royaltyPrice = price * (royaltyPercentage / 100);
+
+          // Deduct royalty from recent bid price
+          const Originalprice = price - royaltyPrice;
           // eslint-disable-next-line no-console
-          console.log('nft', nft);
-          // Check if the highest bid value is greater than or equal to the listed item's sell value
-          if (price >= listedItem.price) {
-            // eslint-disable-next-line no-console
-            console.log('nfts', nfts);
-            const previousOwner = nfts.owner;
-            const previousOwners = nfts.previousOwners;
+          console.log('price', Originalprice);
 
-            previousOwners.push(previousOwner);
-            // eslint-disable-next-line no-console
-            console.log('Owners', previousOwners);
+          //Call the function
 
-            nfts.owner = userId; // Replace owner with the highest bidder's ID
+          await nfts.save();
+          // await NFTs.findByIdAndUpdate(nft);
 
-            await nfts.save();
-            // Remove the listed item
-            await NFTs.findByIdAndUpdate(nft, { listed: false }), // Update owner of NFT
-              //   await ListedItems.findByIdAndUpdate({});
-              // eslint-disable-next-line no-console
-              console.log('Successful', ListedItems);
-          }
+          // const previousOwner = nfts.owner;
+          // const previousOwners = nfts.previousOwners;
+
+          // previousOwners.push(previousOwner);
+
+          // nfts.owner = userId; // Replace owner with the highest bidder's ID
+
+          // await nfts.save();
+          // // Remove the listed item
+          // await NFTs.findByIdAndUpdate(nft, { listed: false }), // Update owner of NFT
+          //   await ListedItems.findByIdAndUpdate({});
         }
       } else if (method === 'Sell to Recent bider') {
         // eslint-disable-next-line no-console
@@ -80,27 +68,30 @@ cron.schedule('0 0 0 * * *', async () => {
 
         if (bids.length > 0) {
           const recentBid = bids[bids.length - 1]; // Select the most recent bid
+          const { userId, price } = recentBid;
           // eslint-disable-next-line no-console
-          console.log('recenttttt', recentBid);
-          const { userId } = recentBid;
-          // eslint-disable-next-line no-console
-          console.log('recenttttt543', userId);
+          console.log('User', userId);
+          // const royaltyPercentage = royalty.royaltyPercentage;
 
-          const previousOwner = nfts.owner;
-          const previousOwners = nfts.previousOwners;
+          // Calculate royalty price
+          const royaltyPercentage = price * (royalty / 100);
 
-          previousOwners.push(previousOwner);
+          // Deduct royalty from recent bid price
+          const Originalprice = price - royaltyPercentage;
           // eslint-disable-next-line no-console
-          console.log('Owners', previousOwners);
+          console.log('Price', Originalprice);
 
-          nfts.owner = userId; // Replace owner with the recent bidder's ID
-          // eslint-disable-next-line no-console
-          console.log('Owners', nfts.owner);
+          //Call the function
 
           await nfts.save();
-          await NFTs.findByIdAndUpdate(nft, { listed: false }); // Remove the listed item and update owner of NFT
-          // eslint-disable-next-line no-console
-          console.log('Successful Recent', ListedItems);
+          // await NFTs.findByIdAndUpdate(nft)
+          // const previousOwner = nfts.owner;
+          // const previousOwners = nfts.previousOwners;
+
+          // previousOwners.push(previousOwner);
+
+          // nfts.owner = userId; // Replace owner with the recent bidder's ID // Remove the listed item and update owner of NFT
+          // await NFTs.findByIdAndUpdate(nft, { listed: false }); // Remove the listed item and update owner of NFT
         }
       }
 

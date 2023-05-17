@@ -19,7 +19,6 @@ router.post('/', validateUser, isValidated, users.create);
 // Read
 router.get('/', users.getAll); // Get all users at once
 router.get('/:userId', checkAuth, users.getById); // Get one user by it's id
-router.put('/update/:userId', users.update);
 
 // Export
 module.exports = router;

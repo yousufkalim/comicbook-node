@@ -7,6 +7,7 @@ var passport = require('passport');
 require('../controllers/auth/loginWithGoogle')(passport);
 
 router.post('/login', validateLogin, isValidated, auth.login); // Get all users at once
+router.put('/update/:userId', auth.update);
 
 // router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

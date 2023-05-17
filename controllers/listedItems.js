@@ -67,150 +67,6 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-// exports.getListedItems = async (req, res) => {
-//   try {
-//     const {
-//       category,
-//       lth,
-//       minPrice,
-//       maxPrice,
-//       recent,
-//       // ...query
-//     } = req.query;
-
-//     let sortQuery = {};
-
-//     if (recent) {
-//       sortQuery['createdAt'] = recent;
-//     }
-
-//     if (lth) {
-//       sortQuery['price'] = lth;
-//     }
-
-//     let filter = {};
-
-//     if (category) {
-//       filter.category = category;
-//     }
-
-//     if (minPrice && maxPrice) {
-//       filter.price = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
-//     } else if (minPrice || maxPrice) {
-//       res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
-//       return;
-//     }
-
-//     const ListedItem = await ListedItems.find(filter)
-//       .populate({
-//         path: 'nft',
-//         match: filter,
-//       })
-//       .populate('bids')
-//       .sort(sortQuery);
-
-//     const filteredListedItems = ListedItem.filter((item) => item.nft !== null);
-
-//     res.json({ success: true, ListedItem: filteredListedItems });
-//   } catch (err) {
-//     // eslint-disable-next-line no-console
-//     console.log('Error-->', err);
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };
-// exports.getListedItems = async (req, res) => {
-//   try {
-//     const {
-//       category,
-//       lth,
-//       minPrice,
-//       maxPrice,
-//       recent,
-//       topRated, // New parameter for top rated
-//     } = req.query;
-
-//     let sortQuery = {};
-
-//     if (recent) {
-//       sortQuery['createdAt'] = recent;
-//     }
-
-//     if (lth) {
-//       sortQuery['price'] = lth;
-//     }
-
-//     let filter = {};
-
-//     if (category) {
-//       filter.category = category;
-//     }
-
-//     if (minPrice && maxPrice) {
-//       filter.price = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
-//     } else if (minPrice || maxPrice) {
-//       res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
-//       return;
-//     }
-
-//     let pipeline = [
-//       {
-//         $lookup: {
-//           from: 'bids',
-//           localField: 'bids',
-//           foreignField: '_id',
-//           as: 'bids',
-//         },
-//       },
-//       {
-//         $addFields: {
-//           numBids: { $size: '$bids' },
-//         },
-//       },
-//       {
-//         $sort: { numBids: -1 },
-//       },
-//     ];
-//     if (category) {
-//       pipeline = [
-//         {
-//           $lookup: {
-//             from: 'bids',
-//             localField: 'bids',
-//             foreignField: '_id',
-//             as: 'bids',
-//           },
-//         },
-//         {
-//           $addFields: {
-//             numBids: { $size: '$bids' },
-//           },
-//         },
-//         {
-//           $match: { category: category },
-//         },
-//         {
-//           $sort: { numBids: -1 },
-//         },
-//       ];
-//     }
-
-//     const ListedItem = await ListedItems.find(filter)
-//       .sort(sortQuery)
-//       .populate({
-//         path: 'nft',
-//         match: filter,
-//       })
-//       .sort(sortQuery)
-//       .aggregate(pipeline);
-
-//     const filteredListedItems = ListedItem.filter((item) => item.nft !== null);
-
-//     res.json({ success: true, ListedItem: filteredListedItems });
-//   } catch (err) {
-//     console.log('Error-->', err);
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };
 exports.getListedItems = async (req, res) => {
   try {
     const {
@@ -219,7 +75,7 @@ exports.getListedItems = async (req, res) => {
       minPrice,
       maxPrice,
       recent,
-      // topRated, // New parameter for top rated
+      // ...query
     } = req.query;
 
     let sortQuery = {};
@@ -245,55 +101,13 @@ exports.getListedItems = async (req, res) => {
       return;
     }
 
-    let pipeline = [
-      {
-        $lookup: {
-          from: 'bids',
-          localField: 'bids',
-          foreignField: '_id',
-          as: 'bids',
-        },
-      },
-      {
-        $addFields: {
-          numBids: { $size: '$bids' },
-        },
-      },
-      {
-        $sort: { numBids: -1 },
-      },
-    ];
-    if (category) {
-      pipeline = [
-        {
-          $lookup: {
-            from: 'bids',
-            localField: 'bids',
-            foreignField: '_id',
-            as: 'bids',
-          },
-        },
-        {
-          $addFields: {
-            numBids: { $size: '$bids' },
-          },
-        },
-        {
-          $match: { category: category },
-        },
-        {
-          $sort: { numBids: -1 },
-        },
-      ];
-    }
-
-    const ListedItem = await ListedItems.aggregate([
-      { $match: filter },
-      { $sort: sortQuery },
-      { $lookup: { from: 'nfts', localField: 'nft', foreignField: '_id', as: 'nft' } },
-      { $unwind: '$nft' },
-      ...pipeline,
-    ]);
+    const ListedItem = await ListedItems.find(filter)
+      .populate({
+        path: 'nft',
+        match: filter,
+      })
+      .populate('bids')
+      .sort(sortQuery);
 
     const filteredListedItems = ListedItem.filter((item) => item.nft !== null);
 

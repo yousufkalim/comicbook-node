@@ -36,6 +36,10 @@ const nftSchema = new mongoose.Schema(
       enum: ['Art', 'Music', 'Video', 'Photography', 'Game', 'Audio'],
       default: 'Art',
     },
+    nft_Token: {
+      type: String,
+      required: true,
+    },
     blockchain: {
       type: String,
       enum: ['Ethereum1', 'Ethereum2', 'Polygon'],

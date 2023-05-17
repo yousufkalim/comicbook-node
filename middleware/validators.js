@@ -49,6 +49,7 @@ exports.validateNft = [
   check('description', 'Description is required.').notEmpty(),
   check('category', 'Select your Category').notEmpty().trim(),
   check('blockchain', 'Select your blockchain').notEmpty().trim(),
+  check('nft_Token', 'NFT_Token is required'),
 ];
 exports.validateListedItems = [
   check('nft', 'Enter the NFT').notEmpty().trim(),
