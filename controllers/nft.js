@@ -10,6 +10,9 @@ exports.create = async (req, res) => {
     if (!existingUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
+    // if (user) {
+    //   return res.status(404).json({ success: false, message: 'User not found' });
+    // }
 
     if (!req.file) {
       res.status(403).json({ success: false, message: 'Please select your Files' });

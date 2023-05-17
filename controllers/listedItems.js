@@ -2,70 +2,36 @@
 const Nft = require('../models/Nft');
 const ListedItems = require('../models/ListedItems');
 
-// exports.create = async (req, res) => {
-//   try {
-//     let { nft } = req.body;
-//     const existingNft = await Nft.findById(nft);
-//     if (!existingNft) {
-//       return res.status(404).json({ success: false, message: 'Nft not found' });
-//     }
-//     if (req.body.type == 'Fixed Price') req.body.listed = true;
-//     const listedItems = await ListedItems.create(req.body);
-//     await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
-//     res.json({ listedItems, success: true }); // Success
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };
 exports.create = async (req, res) => {
   try {
-    let { nft } = req.body;
-    const existingNft = await Nft.findById(nft);
+    let { nft, userId } = req.body;
+    const existingNft = await Nft.findById(nft).populate('creator');
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
     }
-    // if (existingNft.listed === true) {
-    //   return res.status(404).json({ success: false, message: 'Already Listed' });
-    // }
+    // eslint-disable-next-line no-console
+    console.log('UserId', existingNft.owner);
+    // eslint-disable-next-line no-console
+    console.log('UserId', existingNft);
+    if (userId !== existingNft.owner) {
+      return res
+        .status(403)
+        .json({ success: false, message: 'This User cannot list this product' });
+    }
+    if (existingNft.listed === true) {
+      return res.status(404).json({ success: false, message: 'Already Listed' });
+    }
     const { type } = req.body;
     if (type === 'Fixed Price') {
-      const { currency, price, royalty } = req.body;
-      if (!currency) {
-        return res.status(400).json({ success: false, message: 'Select the Currency' });
-      }
-      if (!price) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Price is required for Fixed Price NFT' });
-      }
-      if (!royalty) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Royalty is required for Fixed Price NFT' });
-      }
       existingNft.listed = true;
       await existingNft.save();
     } else if (type === 'Timed Auction') {
-      const { currency, price, duration, royalty, method } = req.body;
-      if (!currency) {
-        return res.status(400).json({ success: false, message: 'Select the Currency' });
-      }
-      if (!price) {
-        return res.status(400).json({
-          success: false,
-          message: 'Price is required for Timed Auction NFT',
-        });
-      }
+      const { duration, method } = req.body;
+
       if (!duration) {
         return res.status(400).json({
           success: false,
           message: 'Duration is required for Timed Auction NFT',
-        });
-      }
-      if (!royalty) {
-        return res.status(400).json({
-          success: false,
-          message: 'Royalty is required for Timed Auction NFT',
         });
       }
       if (!method) {
@@ -101,61 +67,23 @@ exports.getById = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-
 // exports.getListedItems = async (req, res) => {
 //   try {
-//     const { category, lth, minPrice, maxPrice, recent, ...query } = req.query; // Extract the category and other query parameters
-
-//     const nftQuery = category ? { category } : {}; // Create the query for the nft category
+//     const {
+//       category,
+//       lth,
+//       minPrice,
+//       maxPrice,
+//       recent,
+//       // ...query
+//     } = req.query;
 
 //     let sortQuery = {};
+
 //     if (recent) {
 //       sortQuery['createdAt'] = recent;
 //     }
-//     if (lth) {
-//       sortQuery['price'] = lth;
-//     }
 
-//     let filter = {};
-//     if (minPrice && maxPrice) {
-//       // eslint-disable-next-line no-console
-//       console.log('first', filter);
-//       filter = {
-//         ...nftQuery,
-//         price: { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) },
-//       };
-//     } else if (minPrice || maxPrice) {
-//       // Handle the case when only one of minPrice or maxPrice is provided
-//       res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
-//       return;
-//     } else {
-//       filter = nftQuery;
-//     }
-//     const ListedItem = await ListedItems.find(query)
-//       .populate({
-//         path: 'nft',
-//         match: nftQuery, // Only populate nft objects with the specified category (if provided)
-//       })
-//       // .populate('owner')
-//       .populate('bids');
-
-//     const filteredListedItems = ListedItem.filter((item) => item.nft !== null); // Filter out ListedItems with null nft (no match for the specified category)
-
-//     res.json({ success: true, ListedItem: filteredListedItems }); // Success
-//   } catch (err) {
-//     // eslint-disable-next-line no-console
-//     console.log('Error-->', err);
-//     res.status(500).json({ success: false, message: 'Internal server' });
-//   }
-// };
-// exports.getListedItems = async (req, res) => {
-//   try {
-//     const { category, lth, minPrice, maxPrice, recent, ...query } = req.query;
-
-//     let sortQuery = {};
-//     if (recent) {
-//       sortQuery['createdAt'] = recent;
-//     }
 //     if (lth) {
 //       sortQuery['price'] = lth;
 //     }
@@ -185,6 +113,100 @@ exports.getById = async (req, res) => {
 
 //     res.json({ success: true, ListedItem: filteredListedItems });
 //   } catch (err) {
+//     // eslint-disable-next-line no-console
+//     console.log('Error-->', err);
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
+// exports.getListedItems = async (req, res) => {
+//   try {
+//     const {
+//       category,
+//       lth,
+//       minPrice,
+//       maxPrice,
+//       recent,
+//       topRated, // New parameter for top rated
+//     } = req.query;
+
+//     let sortQuery = {};
+
+//     if (recent) {
+//       sortQuery['createdAt'] = recent;
+//     }
+
+//     if (lth) {
+//       sortQuery['price'] = lth;
+//     }
+
+//     let filter = {};
+
+//     if (category) {
+//       filter.category = category;
+//     }
+
+//     if (minPrice && maxPrice) {
+//       filter.price = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
+//     } else if (minPrice || maxPrice) {
+//       res.status(400).json({ success: false, message: 'Both minPrice and maxPrice are required' });
+//       return;
+//     }
+
+//     let pipeline = [
+//       {
+//         $lookup: {
+//           from: 'bids',
+//           localField: 'bids',
+//           foreignField: '_id',
+//           as: 'bids',
+//         },
+//       },
+//       {
+//         $addFields: {
+//           numBids: { $size: '$bids' },
+//         },
+//       },
+//       {
+//         $sort: { numBids: -1 },
+//       },
+//     ];
+//     if (category) {
+//       pipeline = [
+//         {
+//           $lookup: {
+//             from: 'bids',
+//             localField: 'bids',
+//             foreignField: '_id',
+//             as: 'bids',
+//           },
+//         },
+//         {
+//           $addFields: {
+//             numBids: { $size: '$bids' },
+//           },
+//         },
+//         {
+//           $match: { category: category },
+//         },
+//         {
+//           $sort: { numBids: -1 },
+//         },
+//       ];
+//     }
+
+//     const ListedItem = await ListedItems.find(filter)
+//       .sort(sortQuery)
+//       .populate({
+//         path: 'nft',
+//         match: filter,
+//       })
+//       .sort(sortQuery)
+//       .aggregate(pipeline);
+
+//     const filteredListedItems = ListedItem.filter((item) => item.nft !== null);
+
+//     res.json({ success: true, ListedItem: filteredListedItems });
+//   } catch (err) {
 //     console.log('Error-->', err);
 //     res.status(500).json({ success: false, message: 'Internal server error' });
 //   }
@@ -197,7 +219,7 @@ exports.getListedItems = async (req, res) => {
       minPrice,
       maxPrice,
       recent,
-      // ...query
+      // topRated, // New parameter for top rated
     } = req.query;
 
     let sortQuery = {};
@@ -223,13 +245,55 @@ exports.getListedItems = async (req, res) => {
       return;
     }
 
-    const ListedItem = await ListedItems.find(filter)
-      .populate({
-        path: 'nft',
-        match: filter,
-      })
-      .populate('bids')
-      .sort(sortQuery);
+    let pipeline = [
+      {
+        $lookup: {
+          from: 'bids',
+          localField: 'bids',
+          foreignField: '_id',
+          as: 'bids',
+        },
+      },
+      {
+        $addFields: {
+          numBids: { $size: '$bids' },
+        },
+      },
+      {
+        $sort: { numBids: -1 },
+      },
+    ];
+    if (category) {
+      pipeline = [
+        {
+          $lookup: {
+            from: 'bids',
+            localField: 'bids',
+            foreignField: '_id',
+            as: 'bids',
+          },
+        },
+        {
+          $addFields: {
+            numBids: { $size: '$bids' },
+          },
+        },
+        {
+          $match: { category: category },
+        },
+        {
+          $sort: { numBids: -1 },
+        },
+      ];
+    }
+
+    const ListedItem = await ListedItems.aggregate([
+      { $match: filter },
+      { $sort: sortQuery },
+      { $lookup: { from: 'nfts', localField: 'nft', foreignField: '_id', as: 'nft' } },
+      { $unwind: '$nft' },
+      ...pipeline,
+    ]);
 
     const filteredListedItems = ListedItem.filter((item) => item.nft !== null);
 
@@ -302,30 +366,6 @@ exports.getAll = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-// // exports.getAllBidByNFT = async (req, res) => {
-// //   try {
-// //     const nftId = req.params.nftId;
-// //     if (!nftId) {
-// //       res.status(403).json({ success: false, message: 'NFT Not Found' });
-// //     }
-// //     const bids = await ListedItems.find({ nft: nftId });
-// //     if (bids.length === 0) {
-// //       res.status(404).json({ success: false, message: 'No Bids found for this NFT' });
-// //     } else {
-// //       res.json({ success: true, bids, message: 'Bids fetched successfully' });
-// //     }
-// //   } catch (err) {
-// //     res.status(500).json({ success: false, message: 'Internal server error' });
-// //   }
-// // };
-// exports.getAll = async (req, res) => {
-//   try {
-//     const results = await ListedItems.find().populate('nft');
-//     res.json({ success: true, results }); // Success
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };
 // // exports.buy = async (req, res) => {
 // //   try {
 // //     const { userId, listedItemId } = req.body;
