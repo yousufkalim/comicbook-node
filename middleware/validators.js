@@ -49,15 +49,14 @@ exports.validateNft = [
   check('description', 'Description is required.').notEmpty(),
   check('category', 'Select your Category').notEmpty().trim(),
   check('blockchain', 'Select your blockchain').notEmpty().trim(),
+  check('nft_Token', 'NFT_Token is required'),
 ];
-// exports.validateListedItems = [
-//   check('nft', 'Enter the NFT').notEmpty().trim(),
-//   check('type', 'Select your type').notEmpty().trim(),
-//   check('method', 'Select your method').notEmpty().trim(),
-//   check('price', 'Enter the price').notEmpty().trim(),
-//   check('royalty', 'Select the royalty').notEmpty().trim(),
-//   check('duration', 'Enter the duration').notEmpty().trim(),
-// ];
+exports.validateListedItems = [
+  check('nft', 'Enter the NFT').notEmpty().trim(),
+  check('type', 'Select your type').notEmpty().trim(),
+  check('price', 'Enter the price').notEmpty().trim(),
+  check('royalty', 'Select the royalty').notEmpty().trim(),
+];
 exports.validateBids = [
   check('userId', 'User is required.').notEmpty().trim(),
   check('listedItem', 'Listed Item is required').notEmpty().trim(),

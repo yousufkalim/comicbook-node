@@ -6,6 +6,7 @@ require('./database');
 
 // Middleware
 require('./middleware/common')(app);
+require('./utils/sellNft');
 
 // API Routes
 app.use('/api', require('./routes'));

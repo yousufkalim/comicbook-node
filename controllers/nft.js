@@ -10,6 +10,9 @@ exports.create = async (req, res) => {
     if (!existingUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
+    // if (user) {
+    //   return res.status(404).json({ success: false, message: 'User not found' });
+    // }
 
     if (!req.file) {
       res.status(403).json({ success: false, message: 'Please select your Files' });
@@ -52,7 +55,6 @@ exports.getNfts = async (req, res) => {
     const Nfts = await Nft.find(req.query)
       .populate('creator')
       .populate('owner')
-      .populate('bids')
       .sort({ createdAt: -1 });
 
     res.json({ success: true, Nfts }); // Success
@@ -68,7 +70,8 @@ exports.getAll = async (req, res) => {
       // lth,
       // minPrice,
       // maxPrice,
-      //rated, ...query
+      //rated,
+      //...query
     } = req.query;
 
     if (recent) {
@@ -88,10 +91,11 @@ exports.getAll = async (req, res) => {
     // }
 
     // const results = await Nft.find(filter).populate('user bids owner').sort(sortQuery);
-    const results = await Nft.find().populate('user owner');
+    const results = await Nft.find().populate('owner');
     res.json({ success: true, results }); // Success
   } catch (err) {
-    // console.log('first', err);
+    // eslint-disable-next-line no-console
+    console.log('first', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
