@@ -2,9 +2,9 @@ const router = require('express').Router();
 const auth = require('../controllers/auth');
 // const { checkAuth } = require('../middleware/checkAuth');
 const { validateLogin, isValidated } = require('../middleware/validators');
-var passport = require('passport');
+// var passport = require('passport');
 // require('../controllers/auth/')(passport);
-require('../controllers/auth/loginWithGoogle')(passport);
+// require('../controllers/auth/loginWithGoogle')(passport);
 
 router.post('/login', validateLogin, isValidated, auth.login); // Get all users at once
 
