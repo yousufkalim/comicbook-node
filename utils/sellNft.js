@@ -99,63 +99,6 @@ cron.schedule('0 0 0 * * *', async () => {
           // await NFTs.findByIdAndUpdate(nft, { listed: false }); // Remove the listed item and update owner of NFT
         }
       }
-
-      // if (method === 'Sell to Recent bider') {
-      //   console.log('Sell to Recent bider');
-
-      //   if (bids.length > 0) {
-      //     bids.sort((a, b) => b.timestamp - a.timestamp); // Sort bids in descending order based on timestamp
-
-      //     const recentBid = bids[0];
-      //     const { userId, price } = recentBid;
-
-      //     if (price >= listedItem.price) {
-      //       const previousOwner = nfts.owner;
-      //       const previousOwners = nfts.previousOwners;
-
-      //       previousOwners.push(previousOwner);
-      //       console.log('Owners', previousOwners);
-
-      //       nfts.owner = userId; // Replace owner with the recent bidder's ID
-
-      //       await nfts.save();
-      //       await NFTs.findByIdAndUpdate(nft, { listed: false }); // Remove the listed item and update owner of NFT
-
-      //       console.log('Successful', NFTs);
-      //     }
-      //   }
-      // }
-
-      // if (method === 'Sell to Recent bider') {
-      //   // eslint-disable-next-line no-console
-      //   console.log('Sell to recent bidersdfghjk');
-      //   // Check if the listed item has bids
-      //   const nft = await NFTs.findById(nft);
-      //   console.log('recent', nft);
-      //   if (bids.length > 0) {
-      //     const recentBid = bids[bids.length - 1];
-      //     console.log('bid', recentBid);
-      //     const { userId } = recentBid;
-      //     console.log('user', userId);
-      //     // Retrieve the NFT document associated with the nftId
-
-      //     // Update the NFT owner and previous owner arrays
-      //     const previousOwner = nft.owner;
-      //     const previousOwners = nft.previousOwners;
-      //     previousOwners.push(previousOwner);
-      //     nfts.owner = userId; // Replace owner with the highest bidder's ID
-
-      //     await nfts.save();
-
-      //     // Remove the listed item
-      //     await NFTs.findByIdAndUpdate(nft, { listed: false });
-      //     // await ListedItems.findByIdAndRemove(listedItem._id);
-      //   }
-      // }
     }
-    // else {
-    //   // eslint-disable-next-line no-console
-    //   console.log('This NFT is already Sold Out');
-    // }
   }
 });
