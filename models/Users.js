@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'buyer', 'seller'],
       default: 'user',
     },
-    wallet_address: {
+    walletAddress: {
       type: String,
     },
   },

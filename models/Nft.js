@@ -3,22 +3,20 @@ const mongoose = require('mongoose');
 // Schema
 const nftSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
-      // required: true,
-    },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'users',
     },
-    owner: [
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+    },
+    previousOwners: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
       },
     ],
-
     doc: {
       type: String,
     },
@@ -29,7 +27,7 @@ const nftSchema = new mongoose.Schema(
       type: String,
       // unique: true,
     },
-    created: {
+    listed: {
       type: Boolean,
       default: false,
     },
@@ -38,6 +36,10 @@ const nftSchema = new mongoose.Schema(
       enum: ['Art', 'Music', 'Video', 'Photography', 'Game', 'Audio'],
       default: 'Art',
     },
+    // nft_Token: {
+    //   type: String,
+    //   required: true,
+    // },
     blockchain: {
       type: String,
       enum: ['Ethereum1', 'Ethereum2', 'Polygon'],

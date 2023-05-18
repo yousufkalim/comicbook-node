@@ -17,12 +17,23 @@ exports.create = async (req, res) => {
       req.body.doc = req.file.path;
     }
     req.body.owner = user;
-    req.body.created = true;
+    req.body.creator = user;
     const nft = await Nft.create(req.body);
-
-    // await Nft.findByIdAndUpdate(nft._id, { $push: { owner: user } }).populate('owner');
-
     res.json({ success: true, nft, message: 'Your Nft has been created successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.update = async (req, res) => {
+  try {
+    const { nftId } = req.params;
+    if (!nftId) {
+      res.json({ success: false, message: 'Please enter the Id' });
+    }
+    const Nft = await Nft.findByIdAndUpdate(nftId, req.body, {
+      new: true,
+    }); // Updating the User
+    res.json({ success: true, Nft }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
@@ -52,7 +63,6 @@ exports.getNfts = async (req, res) => {
     const Nfts = await Nft.find(req.query)
       .populate('creator')
       .populate('owner')
-      .populate('bids')
       .sort({ createdAt: -1 });
 
     res.json({ success: true, Nfts }); // Success
@@ -63,59 +73,16 @@ exports.getNfts = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     let sortQuery = {};
-    const {
-      recent,
-      // lth,
-      // minPrice,
-      // maxPrice,
-      //rated, ...query
-    } = req.query;
+    const { recent } = req.query;
 
     if (recent) {
       sortQuery['createdAt'] = recent;
     }
-    // if (lth) {
-    //   sortQuery['price'] = lth;
-    // }
-
-    // let filter = {};
-    // if (minPrice && maxPrice) {
-    //   filter['price'] = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
-    // } else if (minPrice) {
-    //   filter['price'] = { $gte: parseFloat(minPrice) };
-    // } else if (maxPrice) {
-    //   filter['price'] = { $lte: parseFloat(maxPrice) };
-    // }
-
-    // const results = await Nft.find(filter).populate('user bids owner').sort(sortQuery);
-    const results = await Nft.find().populate('user owner');
+    const results = await Nft.find().populate('owner');
     res.json({ success: true, results }); // Success
   } catch (err) {
-    // console.log('first', err);
+    // eslint-disable-next-line no-console
+    console.log('first', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-
-// exports.getAll = async (req, res) => {
-//   try {
-//     let sortQuery = {};
-//     const {
-//       recent,
-//       lth,
-//       //rated, ...query
-//     } = req.query;
-//     if (recent) {
-//       sortQuery['createdAt'] = recent;
-//     }
-//     if (lth) {
-//       sortQuery['price'] = lth;
-//     }
-//     // if (rated) {
-//     //   sortQuery['$expr'] = { $gt: [{ $size: '$owner' }, 0] };
-//     // }
-//     const results = await Nft.find().populate('user bids owner').sort(sortQuery);
-//     res.json({ success: true, results }); // Success
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };

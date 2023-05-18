@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const users = require('../controllers/users');
 const { checkAuth } = require('../middleware/checkAuth');
-const { upload } = require('../middleware/multer');
-const { validateUser, validateUserUpdate, isValidated } = require('../middleware/validators');
+// const { upload } = require('../middleware/multer');
+const { validateUser, isValidated } = require('../middleware/validators');
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -17,7 +17,7 @@ const { validateUser, validateUserUpdate, isValidated } = require('../middleware
 router.post('/', validateUser, isValidated, users.create);
 
 // Read
-router.get('/', checkAuth, users.getAll); // Get all users at once
+router.get('/', users.getAll); // Get all users at once
 router.get('/:userId', checkAuth, users.getById); // Get one user by it's id
 
 // Export

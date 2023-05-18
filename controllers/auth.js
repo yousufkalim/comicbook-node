@@ -30,7 +30,6 @@ exports.login = async (req, res) => {
       // If password not matched
       return res.status(400).json({ success: false, message: 'Invalid Password' });
     }
-
     // Creating payload with user object
     delete user.password; // Removing password from user object
     const payload = { user };
@@ -43,9 +42,6 @@ exports.login = async (req, res) => {
       res.json({ success: true, user, token });
     });
   } catch (err) {
-    // Error handling
-    // eslint-disable-next-line no-console
-    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -131,7 +127,30 @@ exports.forgot = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+exports.update = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      res.json({ success: false, message: 'Please enter the Id' });
+    }
+    const User = await Users.findByIdAndUpdate(userId, req.body, {
+      new: true,
+    });
+    res.json({ success: true, User }); // Success
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.getById = async (req, res) => {
+  try {
+    const userId = req.user;
 
+    const user = await Users.findById(userId._id);
+    res.json({ success: true, user }); // Success
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 /**
  * Confirm auth
  * @param {object} req
