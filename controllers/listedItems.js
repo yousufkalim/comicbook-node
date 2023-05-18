@@ -4,7 +4,7 @@ const ListedItems = require('../models/ListedItems');
 
 exports.create = async (req, res) => {
   try {
-    let { nft, userId } = req.body;
+    let { nft } = req.body;
     const existingNft = await Nft.findById(nft).populate('creator');
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
@@ -13,11 +13,11 @@ exports.create = async (req, res) => {
     console.log('UserId', existingNft.owner);
     // eslint-disable-next-line no-console
     console.log('UserId', existingNft);
-    if (userId !== existingNft.owner) {
-      return res
-        .status(403)
-        .json({ success: false, message: 'This User cannot list this product' });
-    }
+    // if (userId !== existingNft.owner) {
+    //   return res
+    //     .status(403)
+    //     .json({ success: false, message: 'This User cannot list this product' });
+    // }
     if (existingNft.listed === true) {
       return res.status(404).json({ success: false, message: 'Already Listed' });
     }

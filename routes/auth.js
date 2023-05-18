@@ -9,7 +9,7 @@ require('../controllers/auth/loginWithGoogle')(passport);
 
 router.post('/login', validateLogin, isValidated, auth.login); // Get all users at once
 router.put('/update/:userId', checkAuth, auth.update);
-router.get('/:userId', checkAuth, auth.getById); // Get one user by it's id
+router.get('/:userId', auth.getById); // Get one user by it's id
 
 // router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

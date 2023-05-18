@@ -27,6 +27,27 @@ exports.create = async (req, res) => {
 
     res.json({ success: true, nft, message: 'Your Nft has been created successfully' });
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('internal', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.update = async (req, res) => {
+  try {
+    const { nftId } = req.params;
+    if (!nftId) {
+      res.json({ success: false, message: 'Please enter the Id' });
+    }
+    const Nft = await Nft.findByIdAndUpdate(nftId, req.body, {
+      new: true,
+    }); // Updating the User
+    res.json({ success: true, Nft }); // Success
+    // eslint-disable-next-line no-console
+    // console.log('wallet', User.walletAddress);
+  } catch (err) {
+    // Error handling
+    // eslint-disable-next-line no-console
+    console.log('Error ----> ', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
