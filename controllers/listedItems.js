@@ -1,4 +1,3 @@
-// // const Users = require('../models/Users');
 const Nft = require('../models/Nft');
 const ListedItems = require('../models/ListedItems');
 
@@ -9,15 +8,6 @@ exports.create = async (req, res) => {
     if (!existingNft) {
       return res.status(404).json({ success: false, message: 'Nft not found' });
     }
-    // eslint-disable-next-line no-console
-    console.log('UserId', existingNft.owner);
-    // eslint-disable-next-line no-console
-    console.log('UserId', existingNft);
-    // if (userId !== existingNft.owner) {
-    //   return res
-    //     .status(403)
-    //     .json({ success: false, message: 'This User cannot list this product' });
-    // }
     if (existingNft.listed === true) {
       return res.status(404).json({ success: false, message: 'Already Listed' });
     }
@@ -46,7 +36,6 @@ exports.create = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid NFT type' });
     }
     const listedItems = await ListedItems.create(req.body);
-    await Nft.findByIdAndUpdate(nft, { $push: { bids: listedItems } }, { new: true });
     res.json({ listedItems, success: true }); // Success
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -180,37 +169,31 @@ exports.getAll = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-// // exports.buy = async (req, res) => {
-// //   try {
-// //     const { userId, listedItemId } = req.body;
+// exports.buy = async (req, res) => {
+//   try {
+//     const { userId, listedItemId } = req.body;
 
-// //     // Find the listed item by ID
-// //     const existingListedItem = await ListedItems.findById(listedItemId);
+//     // Find the listed item by ID
+//     const existingListedItem = await ListedItems.findById(listedItemId);
 
-// //     if (!existingListedItem) {
-// //       return res.status(404).json({ success: false, message: 'Listed item not found' });
-// //     }
+//     if (!existingListedItem) {
+//       return res.status(404).json({ success: false, message: 'Listed item not found' });
+//     }
 
-// //     // Find the NFT by ID from the listed item model
-// //     const existingNft = await Nft.findById(existingListedItem.nft._id).populate('owner');
-// //     // const existingNft = '2134567890ghdahbf';
-// //     if (!existingNft) {
-// //       return res.status(404).json({ success: false, message: 'NFT not found' });
-// //     }
+//     // Find the NFT by ID from the listed item model
+//     const existingNft = await Nft.findById(existingListedItem.nft._id).populate('owner');
+//     if (!existingNft) {
+//       return res.status(404).json({ success: false, message: 'NFT not found' });
+//     }
 
-// //     // Add the userId to the owners array
-// //     existingNft.owner.push(userId);
+//     // Add the userId to the owners array
+//     existingNft.owner.push(userId);
 
-// //     // Remove the sold listed item from the NFT's bids array
-// //     existingNft.bids = existingNft.bids.filter((bid) => {
-// //       return bid.toString() !== listedItemId.toString();
-// //     });
+//     // Save the updated NFT and remove the sold listed item
+//     await Promise.all([existingNft.save(), existingListedItem.remove()]);
 
-// //     // Save the updated NFT and remove the sold listed item
-// //     await Promise.all([existingNft.save(), existingListedItem.remove()]);
-
-// //     res.json({ success: true, message: 'Congratulations' }); // Success
-// //   } catch (err) {
-// //     res.status(500).json({ success: false, message: 'Internal server error' });
-// //   }
-// // };
+//     res.json({ success: true, message: 'Congratulations' }); // Success
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };

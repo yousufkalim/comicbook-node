@@ -7,17 +7,20 @@ const sellNFT = require('../web3/contractFunction');
 
 cron.schedule('0 0 0 * * *', async () => {
   // for midnight 12'o clok '0 0 0 * * *'
-
-  const date = moment().subtract(1, 'day');
+  const currentDate = moment().startOf('day');
+  // const date = moment().subtract(1, 'day');
   // eslint-disable-next-line no-console
-  console.log('first', date);
+  console.log('first', currentDate);
   // Get all listed items with a duration greater than 0
   // const listedItems = await ListedItems.find({ duration: { $gt: new Date() } }).populate('bids');
-
-  const listedItems = await ListedItems.find({ duration: { $gt: new Date() } }).populate({
+  const listedItems = await ListedItems.find({ duration: currentDate }).populate({
     path: 'bids',
-    model: bids, // Name of the model
+    model: bids,
   });
+  // const listedItems = await ListedItems.find({ duration: { $gt: new Date() } }).populate({
+  //   path: 'bids',
+  //   model: bids, // Name of the model
+  // });
 
   for (const listedItem of listedItems) {
     const { bids, method, nft, royalty } = listedItem;
