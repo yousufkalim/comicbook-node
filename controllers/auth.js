@@ -152,8 +152,9 @@ exports.update = async (req, res) => {
 };
 exports.getById = async (req, res) => {
   try {
-    const userId = req.params.userId; // Getting user id from URL parameter
-    const user = await Users.findById(userId); // Finding user by id
+    const userId = req.user;
+    // const userId = req.params.userId; // Getting user id from URL parameter
+    const user = await Users.findById(userId._id); // Finding user by id
     res.json({ success: true, user }); // Success
   } catch (err) {
     res.status(500).json({ success: false, message: 'Internal server error' });

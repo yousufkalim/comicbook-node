@@ -33,10 +33,10 @@ exports.checkAuth = (req, res, next) => {
     req.user = user;
 
     // If user authenticated
-    // res.set(
-    //   'cache-control',
-    //   'no-cache, no-store, private, must-revalidate, post-check=0, pre-check=0',
-    // );
+    res.set(
+      'cache-control',
+      'no-cache, no-store, private, must-revalidate, post-check=0, pre-check=0',
+    );
 
     // Done
     next();
