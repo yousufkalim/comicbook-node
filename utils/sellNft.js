@@ -3,6 +3,7 @@ const moment = require('moment');
 const ListedItems = require('../models/ListedItems');
 const NFTs = require('../models/Nft');
 const bids = require('../models/Bids');
+const sellNFT = require('../web3/contractFunction');
 
 cron.schedule('0 0 0 * * *', async () => {
   // for midnight 12'o clok '0 0 0 * * *'
@@ -81,7 +82,8 @@ cron.schedule('0 0 0 * * *', async () => {
           // eslint-disable-next-line no-console
           console.log('Price', Originalprice);
 
-          //Call the function
+          //Call the function  & required parameters tokinId, royalty, artist address
+          await sellNFT();
 
           await nfts.save();
           // await NFTs.findByIdAndUpdate(nft)
